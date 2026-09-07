@@ -1,7 +1,23 @@
+/*
+  Breakpoint convention used across this app's CSS (mobile-first).
+  Plain CSS has no variables inside @media queries, so these are just
+  the numbers we standardize on everywhere:
+    - base styles        : phones, < 600px (no media query needed)
+    - @media (min-width: 600px)  : large phones / small tablets
+    - @media (min-width: 900px)  : tablets / small laptops
+    - @media (min-width: 1200px) : desktop
+*/
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* stops fixed vw/vh values from creating horizontal scroll on small screens */
 }
 
 body {
@@ -11,6 +27,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 code {

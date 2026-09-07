@@ -68,7 +68,7 @@ export default function Authentication() {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Grid container component="main" sx={{ height: '100vh' }}>
+            <Grid container component="main" sx={{ minHeight: '100vh' }}>
                 <CssBaseline />
                 <Grid
                     item
@@ -87,8 +87,8 @@ export default function Authentication() {
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                     <Box
                         sx={{
-                            my: 8,
-                            mx: 4,
+                            my: { xs: 4, sm: 8 },
+                            mx: { xs: 2, sm: 4 },
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',

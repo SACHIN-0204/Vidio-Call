@@ -11,6 +11,7 @@ import MicOffIcon from '@mui/icons-material/MicOff'
 import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 import StopScreenShareIcon from '@mui/icons-material/StopScreenShare'
 import ChatIcon from '@mui/icons-material/Chat'
+import CloseIcon from '@mui/icons-material/Close'
 import server from '../environment';
 
 const server_url = server;
@@ -451,16 +452,17 @@ export default function VideoMeetComponent() {
 
             {askForUsername === true ?
 
-                <div>
+                <div style={{ padding: "20px", textAlign: "center" }}>
 
 
                     <h2>Enter into Lobby </h2>
-                    <TextField id="outlined-basic" label="Username" value={username} onChange={e => setUsername(e.target.value)} variant="outlined" />
-                    <Button variant="contained" onClick={connect}>Connect</Button>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center", marginTop: "10px" }}>
+                        <TextField id="outlined-basic" label="Username" value={username} onChange={e => setUsername(e.target.value)} variant="outlined" />
+                        <Button variant="contained" onClick={connect}>Connect</Button>
+                    </div>
 
-
-                    <div>
-                        <video ref={localVideoref} autoPlay muted></video>
+                    <div style={{ marginTop: "20px" }}>
+                        <video ref={localVideoref} autoPlay muted style={{ maxWidth: "100%", height: "auto", borderRadius: "10px" }}></video>
                     </div>
 
                 </div> :
@@ -471,7 +473,12 @@ export default function VideoMeetComponent() {
                     {showModal ? <div className={styles.chatRoom}>
 
                         <div className={styles.chatContainer}>
-                            <h1>Chat</h1>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                <h1>Chat</h1>
+                                <IconButton onClick={() => setModal(false)}>
+                                    <CloseIcon />
+                                </IconButton>
+                            </div>
 
                             <div className={styles.chattingDisplay}>
 
