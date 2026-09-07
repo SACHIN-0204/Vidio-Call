@@ -46,7 +46,7 @@ export default function LandingPage() {
                 </div>
             </div>
 
-
+            <p className="devCredit">Developed by Sachin Vishwakarma</p>
 
         </div>
     )

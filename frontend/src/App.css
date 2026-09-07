@@ -114,11 +114,13 @@
     font-size: 1.7rem;
   }
 
-  .landingMainContainer>div:nth-child(2) img {
-    width: auto;
-    max-width: none;
-    height: 70vh;
-  }
+}
+
+.devCredit {
+  text-align: center;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  padding-block: 1rem 1.5rem;
 }
 
 .navBar {

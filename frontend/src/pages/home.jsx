@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import "../App.css";
 import { Button, IconButton, TextField } from '@mui/material';
 import RestoreIcon from '@mui/icons-material/Restore';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { AuthContext } from '../contexts/AuthContext';
 
 function HomeComponent() {
@@ -25,7 +26,9 @@ function HomeComponent() {
             <div className="navBar">
 
                 <div style={{ display: "flex", alignItems: "center" }}>
-
+                    <IconButton onClick={() => navigate(-1)} aria-label="go back">
+                        <ArrowBackIcon />
+                    </IconButton>
                     <h2>Apna Video Call</h2>
                 </div>
 

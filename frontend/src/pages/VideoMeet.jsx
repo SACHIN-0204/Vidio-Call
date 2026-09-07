@@ -12,6 +12,8 @@ import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 import StopScreenShareIcon from '@mui/icons-material/StopScreenShare'
 import ChatIcon from '@mui/icons-material/Chat'
 import CloseIcon from '@mui/icons-material/Close'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { useNavigate } from 'react-router-dom';
 import server from '../environment';
 
 const server_url = server;
@@ -25,6 +27,8 @@ const peerConfigConnections = {
 }
 
 export default function VideoMeetComponent() {
+
+    const navigate = useNavigate();
 
     var socketRef = useRef();
     let socketIdRef = useRef();
@@ -454,6 +458,11 @@ export default function VideoMeetComponent() {
 
                 <div style={{ padding: "20px", textAlign: "center" }}>
 
+                    <div style={{ textAlign: "left" }}>
+                        <IconButton onClick={() => navigate(-1)} aria-label="go back">
+                            <ArrowBackIcon />
+                        </IconButton>
+                    </div>
 
                     <h2>Enter into Lobby </h2>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center", marginTop: "10px" }}>

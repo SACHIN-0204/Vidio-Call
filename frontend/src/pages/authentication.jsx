@@ -11,9 +11,12 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AuthContext } from '../contexts/AuthContext';
 import { Snackbar } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -22,6 +25,8 @@ import { Snackbar } from '@mui/material';
 const defaultTheme = createTheme();
 
 export default function Authentication() {
+
+    const navigate = useNavigate();
 
     
 
@@ -76,7 +81,7 @@ export default function Authentication() {
                     sm={4}
                     md={7}
                     sx={{
-                        backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+                        backgroundImage: 'url(https://picsum.photos/1200/900)',
                         backgroundRepeat: 'no-repeat',
                         backgroundColor: (t) =>
                             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -94,6 +99,10 @@ export default function Authentication() {
                             alignItems: 'center',
                         }}
                     >
+                        <IconButton onClick={() => navigate(-1)} sx={{ alignSelf: 'flex-start' }} aria-label="go back">
+                            <ArrowBackIcon />
+                        </IconButton>
+
                         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                             <LockOutlinedIcon />
                         </Avatar>
