@@ -5,7 +5,10 @@ const userScheme = new Schema(
         name: { type: String, required: true },
         username: { type: String, required: true, unique: true },
         password: { type: String, required: true },
-        token: { type: String }
+        token: { type: String },
+        isVerified: { type: Boolean, default: false },
+        verificationToken: { type: String },
+        verificationTokenExpiry: { type: Date }
     }
 )
 
