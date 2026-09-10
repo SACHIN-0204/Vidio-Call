@@ -4,7 +4,6 @@ import bcrypt, { hash } from "bcrypt"
 
 import crypto from "crypto"
 import { Meeting } from "../models/meeting.model.js";
-import { sendVerificationEmail } from "../utils/mailer.js";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -20,10 +19,6 @@ const login = async (req, res) => {
         const user = await User.findOne({ username });
         if (!user) {
             return res.status(httpStatus.NOT_FOUND).json({ message: "User Not Found" })
-        }
-
-        if (user.isVerified === false) {
-            return res.status(httpStatus.FORBIDDEN).json({ message: "Please verify your email before logging in. Check your inbox for the verification link." })
         }
 
         let isPasswordCorrect = await bcrypt.compare(password, user.password)
@@ -43,35 +38,6 @@ const login = async (req, res) => {
     }
 }
 
-const resendVerification = async (req, res) => {
-    const { username } = req.body;
-
-    if (!username) {
-        return res.status(httpStatus.BAD_REQUEST).json({ message: "Please provide your email address" });
-    }
-
-    try {
-        const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(httpStatus.NOT_FOUND).json({ message: "User Not Found" });
-        }
-
-        if (user.isVerified) {
-            return res.status(httpStatus.BAD_REQUEST).json({ message: "This email is already verified. You can log in." });
-        }
-
-        user.verificationToken = crypto.randomBytes(32).toString("hex");
-        user.verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-        await user.save();
-        await sendVerificationEmail(username, user.verificationToken);
-
-        return res.status(httpStatus.OK).json({ message: "A new verification email has been sent." });
-    } catch (e) {
-        return res.status(500).json({ message: "Unable to send the verification email right now" });
-    }
-}
-
-
 const register = async (req, res) => {
     const { name, username, password } = req.body;
 
@@ -86,66 +52,25 @@ const register = async (req, res) => {
     try {
         const existingUser = await User.findOne({ username });
         if (existingUser) {
-            return res.status(httpStatus.FOUND).json({ message: "User already exists" });
+            return res.status(httpStatus.CONFLICT).json({ message: "User already exists" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const verificationToken = crypto.randomBytes(32).toString("hex");
-        const verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-
         const newUser = new User({
             name: name,
             username: username,
-            password: hashedPassword,
-            isVerified: false,
-            verificationToken: verificationToken,
-            verificationTokenExpiry: verificationTokenExpiry
+            password: hashedPassword
         });
 
         await newUser.save();
 
-        try {
-            await sendVerificationEmail(username, verificationToken);
-        } catch (mailErr) {
-            console.log("Failed to send verification email:", mailErr);
-            return res.status(httpStatus.SERVICE_UNAVAILABLE).json({
-                message: "Your account was created, but the verification email could not be sent. Please try resending it later."
-            });
-        }
-
-        res.status(httpStatus.CREATED).json({ message: "Registered! Please check your email to verify your account before logging in." })
+        res.status(httpStatus.CREATED).json({ message: "Registered successfully! You can now log in." })
 
     } catch (e) {
         res.json({ message: `Something went wrong ${e}` })
     }
 
-}
-
-
-const verifyEmail = async (req, res) => {
-    const { token } = req.params;
-
-    try {
-        const user = await User.findOne({ verificationToken: token });
-
-        if (!user) {
-            return res.status(httpStatus.BAD_REQUEST).json({ message: "Invalid or already-used verification link" });
-        }
-
-        if (user.verificationTokenExpiry < new Date()) {
-            return res.status(httpStatus.BAD_REQUEST).json({ message: "This verification link has expired. Please register again or request a new link." });
-        }
-
-        user.isVerified = true;
-        user.verificationToken = undefined;
-        user.verificationTokenExpiry = undefined;
-        await user.save();
-
-        return res.status(httpStatus.OK).json({ message: "Email verified successfully! You can now log in." });
-    } catch (e) {
-        return res.status(500).json({ message: `Something went wrong ${e}` });
-    }
 }
 
 
@@ -181,4 +106,4 @@ const addToHistory = async (req, res) => {
 }
 
 
-export { login, register, resendVerification, verifyEmail, getUserHistory, addToHistory }
+export { login, register, getUserHistory, addToHistory }

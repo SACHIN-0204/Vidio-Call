@@ -55,20 +55,6 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-    const resendVerification = async (username) => {
-        const request = await client.post("/resend-verification", { username });
-        return request.data.message;
-    }
-
-    const verifyEmail = async (token) => {
-        try {
-            let request = await client.get(`/verify/${token}`);
-            return request.data.message;
-        } catch (err) {
-            throw err;
-        }
-    }
-
     const getHistoryOfUser = async () => {
         try {
             let request = await client.get("/get_all_activity", {
@@ -97,7 +83,7 @@ export const AuthProvider = ({ children }) => {
 
 
     const data = {
-        userData, setUserData, addToUserHistory, getHistoryOfUser, handleRegister, handleLogin, resendVerification, verifyEmail
+        userData, setUserData, addToUserHistory, getHistoryOfUser, handleRegister, handleLogin
     }
 
     return (

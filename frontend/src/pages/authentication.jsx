@@ -30,12 +30,11 @@ export default function Authentication() {
 
     
 
-    const [username, setUsername] = React.useState();
-    const [password, setPassword] = React.useState();
-    const [name, setName] = React.useState();
-    const [error, setError] = React.useState();
-    const [message, setMessage] = React.useState();
-    const [verificationPending, setVerificationPending] = React.useState(false);
+    const [username, setUsername] = React.useState("");
+    const [password, setPassword] = React.useState("");
+    const [name, setName] = React.useState("");
+    const [error, setError] = React.useState("");
+    const [message, setMessage] = React.useState("");
 
 
     const [formState, setFormState] = React.useState(0);
@@ -43,7 +42,7 @@ export default function Authentication() {
     const [open, setOpen] = React.useState(false)
 
 
-    const { handleRegister, handleLogin, resendVerification } = React.useContext(AuthContext);
+    const { handleRegister, handleLogin } = React.useContext(AuthContext);
 
     let handleAuth = async () => {
         try {
@@ -62,30 +61,12 @@ export default function Authentication() {
                 setError("")
                 setFormState(0)
                 setPassword("")
-                setVerificationPending(false)
             }
         } catch (err) {
 
             console.log(err);
             let message = err.response?.data?.message || "Unable to complete the request. Please try again.";
             setError(message);
-            setVerificationPending(err.response?.status === 403);
-        }
-    }
-
-    const handleResendVerification = async () => {
-        try {
-            const result = await resendVerification(username);
-            setMessage(result);
-            setError("");
-            setVerificationPending(false);
-            setOpen(true);
-        } catch (err) {
-            if (err.response?.status === 404) {
-                setError("Email verification service is not available yet. Please redeploy the backend, then try again.");
-            } else {
-                setError(err.response?.data?.message || "Unable to send the verification email. Please try again.");
-            }
         }
     }
 
@@ -175,17 +156,6 @@ export default function Authentication() {
                             />
 
                             <p style={{ color: "red" }}>{error}</p>
-
-                            {verificationPending && username && (
-                                <Button
-                                    type="button"
-                                    fullWidth
-                                    variant="text"
-                                    onClick={handleResendVerification}
-                                >
-                                    Resend verification email
-                                </Button>
-                            )}
 
                             <Button
                                 type="button"

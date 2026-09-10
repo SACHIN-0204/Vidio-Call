@@ -8,7 +8,6 @@ import { Server } from "socket.io";
 
 import mongoose from "mongoose";
 import { connectToSocket } from "./controllers/socketManager.js";
-import { verifyMailer } from "./utils/mailer.js";
 
 import cors from "cors";
 import userRoutes from "./routes/users.routes.js";
@@ -30,7 +29,6 @@ app.use("/api/v1/users", userRoutes);
 
 const start = async () => {
     app.set("mongo_user")
-    await verifyMailer();
     const connectionDb = await mongoose.connect("mongodb+srv://VideoConference:videoconference@cluster0.ofemiis.mongodb.net/VideoConference")
 
     console.log(`MONGO Connected DB HOst: ${connectionDb.connection.host}`)
