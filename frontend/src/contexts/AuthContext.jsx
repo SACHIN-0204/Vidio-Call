@@ -46,9 +46,6 @@ export const AuthProvider = ({ children }) => {
                 password: password
             });
 
-            console.log(username, password)
-            console.log(request.data)
-
             if (request.status === httpStatus.OK) {
                 localStorage.setItem("token", request.data.token);
                 router("/home")
@@ -56,6 +53,11 @@ export const AuthProvider = ({ children }) => {
         } catch (err) {
             throw err;
         }
+    }
+
+    const resendVerification = async (username) => {
+        const request = await client.post("/resend-verification", { username });
+        return request.data.message;
     }
 
     const verifyEmail = async (token) => {
@@ -95,7 +97,7 @@ export const AuthProvider = ({ children }) => {
 
 
     const data = {
-        userData, setUserData, addToUserHistory, getHistoryOfUser, handleRegister, handleLogin, verifyEmail
+        userData, setUserData, addToUserHistory, getHistoryOfUser, handleRegister, handleLogin, resendVerification, verifyEmail
     }
 
     return (

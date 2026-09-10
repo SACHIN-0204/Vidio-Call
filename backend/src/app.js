@@ -1,14 +1,20 @@
-import "dotenv/config";
+import dotenv from "dotenv";
 import express from "express";
 import { createServer } from "node:http";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { Server } from "socket.io";
 
 import mongoose from "mongoose";
 import { connectToSocket } from "./controllers/socketManager.js";
+import { verifyMailer } from "./utils/mailer.js";
 
 import cors from "cors";
 import userRoutes from "./routes/users.routes.js";
+
+const srcDirectory = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.join(srcDirectory, ".env") });
 
 const app = express();
 const server = createServer(app);
@@ -24,6 +30,7 @@ app.use("/api/v1/users", userRoutes);
 
 const start = async () => {
     app.set("mongo_user")
+    await verifyMailer();
     const connectionDb = await mongoose.connect("mongodb+srv://VideoConference:videoconference@cluster0.ofemiis.mongodb.net/VideoConference")
 
     console.log(`MONGO Connected DB HOst: ${connectionDb.connection.host}`)

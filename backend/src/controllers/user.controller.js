@@ -22,7 +22,7 @@ const login = async (req, res) => {
             return res.status(httpStatus.NOT_FOUND).json({ message: "User Not Found" })
         }
 
-        if (!user.isVerified) {
+        if (user.isVerified === false) {
             return res.status(httpStatus.FORBIDDEN).json({ message: "Please verify your email before logging in. Check your inbox for the verification link." })
         }
 
@@ -40,6 +40,34 @@ const login = async (req, res) => {
 
     } catch (e) {
         return res.status(500).json({ message: `Something went wrong ${e}` })
+    }
+}
+
+const resendVerification = async (req, res) => {
+    const { username } = req.body;
+
+    if (!username) {
+        return res.status(httpStatus.BAD_REQUEST).json({ message: "Please provide your email address" });
+    }
+
+    try {
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(httpStatus.NOT_FOUND).json({ message: "User Not Found" });
+        }
+
+        if (user.isVerified) {
+            return res.status(httpStatus.BAD_REQUEST).json({ message: "This email is already verified. You can log in." });
+        }
+
+        user.verificationToken = crypto.randomBytes(32).toString("hex");
+        user.verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        await user.save();
+        await sendVerificationEmail(username, user.verificationToken);
+
+        return res.status(httpStatus.OK).json({ message: "A new verification email has been sent." });
+    } catch (e) {
+        return res.status(500).json({ message: "Unable to send the verification email right now" });
     }
 }
 
@@ -81,8 +109,9 @@ const register = async (req, res) => {
             await sendVerificationEmail(username, verificationToken);
         } catch (mailErr) {
             console.log("Failed to send verification email:", mailErr);
-            // User is still created; they can request this to be resent later.
-            // We don't fail the whole registration just because the email didn't send.
+            return res.status(httpStatus.SERVICE_UNAVAILABLE).json({
+                message: "Your account was created, but the verification email could not be sent. Please try resending it later."
+            });
         }
 
         res.status(httpStatus.CREATED).json({ message: "Registered! Please check your email to verify your account before logging in." })
@@ -152,4 +181,4 @@ const addToHistory = async (req, res) => {
 }
 
 
-export { login, register, verifyEmail, getUserHistory, addToHistory }
+export { login, register, resendVerification, verifyEmail, getUserHistory, addToHistory }
